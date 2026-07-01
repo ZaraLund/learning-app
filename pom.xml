@@ -73,6 +73,15 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<!-- Ersatt av V4__add_idempotency_keys_table.sql -->
+					<exclude>db/migration/V4__add_idempotency_key_to_bookings.sql</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

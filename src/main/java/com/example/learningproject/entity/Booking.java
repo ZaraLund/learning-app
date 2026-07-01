@@ -34,6 +34,9 @@ public class Booking {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
+    @Column(name = "idempotency_key", unique = true)
+    private String idempotencyKey;
+
     protected Booking() {}
 
     public Booking(Room room, User user, LocalDateTime startTime, LocalDateTime endTime) {
@@ -77,5 +80,13 @@ public class Booking {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
     }
 }

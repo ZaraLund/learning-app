@@ -10,9 +10,10 @@ import com.example.learningproject.repository.BookingRepository;
 import com.example.learningproject.repository.RoomRepository;
 import com.example.learningproject.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -37,7 +38,14 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingDto create(CreateBookingRequest request) {
+    public BookingDto create(CreateBookingRequest request, String idempotencyKey) {
+        if (idempotencyKey != null) {
+            Optional<Booking> existing = bookingRepository.findByIdempotencyKey(idempotencyKey);
+            if (existing.isPresent()) {
+                return BookingMapper.toDto(existing.get());
+            }
+        }
+
         Room room = roomRepository.findById(request.roomId())
                 .orElseThrow(() -> new IllegalArgumentException("Room not found: " + request.roomId()));
 
@@ -45,9 +53,9 @@ public class BookingService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.userId()));
 
         Booking booking = new Booking(room, user, request.startTime(), request.endTime());
-        Booking saved = bookingRepository.save(booking);
+        booking.setIdempotencyKey(idempotencyKey);
 
-        return BookingMapper.toDto(saved);
+        return BookingMapper.toDto(bookingRepository.save(booking));
     }
 
     public void delete(Long id) {

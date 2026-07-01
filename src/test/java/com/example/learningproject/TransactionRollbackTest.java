@@ -62,7 +62,7 @@ class TransactionRollbackTest {
                 LocalDateTime.of(2027, 1, 1, 11, 0)
         );
 
-        assertThatThrownBy(() -> bookingService.create(request))
+        assertThatThrownBy(() -> bookingService.create(request, null))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Simulated failure after save");
 

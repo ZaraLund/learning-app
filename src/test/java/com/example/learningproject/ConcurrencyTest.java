@@ -53,7 +53,7 @@ class ConcurrencyTest {
             futures.add(executor.submit(() -> {
                 readyLatch.countDown();
                 startGate.await();
-                return bookingService.create(request);
+                return bookingService.create(request, null);
             }));
         }
 
